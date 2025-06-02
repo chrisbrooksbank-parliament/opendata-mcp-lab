@@ -8,6 +8,8 @@ It will allow the asking of questions e.g. to Microsoft Copilot AI.
 
 Example questions, it will aim to support, taken from my earlier coach and focus [repo](https://github.com/ChrisBrooksbank/UKParliamentEndPointsAIChat/blob/main/OpenAi.Api/Functions/ExampleRepository.cs)  
 
+This has information on how to answer these questions : https://github.com/ChrisBrooksbank/UKParliamentEndPointsAIChat/blob/main/OpenAi.Api/Functions/FunctionRepository.cs
+
 - Who is Boris Johnson  
 - What is happening now in Commons  
 - Statutory instruments on harbour  
