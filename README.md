@@ -1,25 +1,93 @@
 # UK Parliament - Open Data - Model Context Protocol Server
 
-This project will make public UK Parliamentary data available to large language models.  
+## Introduction
 
-It will allow the asking of questions e.g. to Microsoft Copilot AI.  
+This project makes public UK Parliamentary data available to large language models (LLMs/AIs) using the [MCP protocol](https://www.anthropic.com/news/model-context-protocol) 
 
-## Example questions  
+It allows the asking of questions on public parliamentary data e.g. to Microsoft Copilot AI. ( but also to any host that supports the MCP protocol ) 
 
-Example questions, it will aim to support, taken from my earlier coach and focus [repo](https://github.com/ChrisBrooksbank/UKParliamentEndPointsAIChat/blob/main/OpenAi.Api/Functions/ExampleRepository.cs)  
+It does not know how to retrieve all possible public data.  
+The selection of possible querys can be increased relatively easily. 
+More efficient methods to plug in more/most public data are planned.   
 
-This has information on how to answer these questions : https://github.com/ChrisBrooksbank/UKParliamentEndPointsAIChat/blob/main/OpenAi.Api/Functions/FunctionRepository.cs
+There is AI in the mix so responses may be inaccurate (see "Reduce hallucinations" below)  
 
+## Installation
+These section describes how to configure CoPilot AI in Visual Studio Code to ask questions of public parliamentary data, including below examples.
+
+Before you begin, please make sure you have the following installed:
+*   **[The .NET SDK](https://dotnet.microsoft.com/en-us/download)** (Version 9 or newer recommended)
+*   **[Git](https://git-scm.com/downloads)**
+*   **[Visual Studio Code](https://code.visualstudio.com/download)**
+
+Clone this repo e.g. to C:\code\opendata-mcp-lab
+
+Open VS Code
+
+### Add MCP Server
+Press `Ctrl+Shift+P` to open VS Code command palette
+Select : MCP: Add Server
+Select : Command: Stdio
+enter command : dot net run --project C:\code\opendata-mcp-lab\OpenData.Mcp.Server\OpenData.Mcp.Server.csproj
+Press enter
+
+### Start MCP Server
+Press `Ctrl+Shift+P` to open VS Code command palette
+Select: MCP: List Servers
+Click on the server you just added, click Start server
+
+### First interaction
+Open Copilot 
+Select Agent mode in bottom left dropdown  
+Click on configure tools in bottom, select all tools from newly added MCP server
+Type a prompt e.g. "What is happening now in Commons"  
+Accept any permissions request to make a MCP call.  
+
+## Prompting tips
+
+### Reduce hallucinations ("Get all data from MCP servers")
+To reduce hallucinations/increase-confidence add initial prompt as "Get all data from MCP servers"
+
+Common response : >Understood. I will only provide responses using data directly from the MCP (Model Context Protocol) servers. Please specify what information you would like to retrieve or explore from MCP, and I will proceed accordingly.
+
+### Clear context (Click +)
+Click + to start a new chat, if you are getting in a loop, or want to clear out any existing context from conversation.
+
+### Get api link ("show me api URL just used")
+Whenever a MCP call is made, the parliamentary API call that was made is returned along with the main response.
+
+You can ask to see this e.g. with prompt : "show me api URL just used"
+
+example response :
+>The API URL just used to retrieve information about Boris Johnson from the MCP server is:
+https://members-api.parliament.uk/api/Members/Search?Name=Boris%20Johnson
+
+
+### Combining data from multiple sources
+Its an AI, so you can prompt e.g "Was chelmsford discussed in either house"  
+And it will make two calls to check hansard, one to Commons, one to Lords, and combine and summarise the result.  
+Then offer to show more information on what you are interested in. 
+
+### Show the raw data ("show me the JSON returned from the last MCP call")
+Its an AI so will summarise and reformat data as it sees fit.
+
+But when it calls a MCP tool it gets back JSON.
+
+And you can ask to see that with a prompt such as : "show me the JSON returned from the last MCP call"
+
+## Example prompts 
+
+- Has Chelmsford been discussed in either house ?
 - Who is Boris Johnson  
-- What is happening now in Commons  
-- Statutory instruments on harbour  
 - What is happening now in Lords  
+- What is happening now in Commons  
+- Search Erskine May for mace  
+- Statutory instruments on harbour
 - Who is member with id 1471  
 - Treaties on fish  
 - Treaties with Spain  
 - Present all the information in {CopyAndPastedApiResult}  
 - What are registered interests for member 172  
-- Search Erskine May for mace  
 - Search Commons Divisions for refugee  
 - Lords Divisions on refugee  
 - Bills on fish  
