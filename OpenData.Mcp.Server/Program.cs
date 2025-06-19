@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using ModelContextProtocol.Server;
 using System.Net.Http; // Added for HttpClient
 using System.Threading.Tasks;
+using System.Text.Json; // For JSON serialization
 
 var builder = Host.CreateEmptyApplicationBuilder(settings: null);
 
@@ -24,43 +25,38 @@ await app.RunAsync();
 [McpServerToolType]
 public static class UKParliamentOpenDataTool
 {
-    private static readonly string MembersSearchUrl = "https://members-api.parliament.uk/api/Members/Search?Name={0}";
-    private static readonly string RecentlyUpdatedBillsUrl = "https://bills-api.parliament.uk/api/v1/Bills?SortOrder=DateUpdatedDescending&skip=0&take={0}";
-    private static readonly string RecentlyTabledEdmsUrl = "https://oralquestionsandmotions-api.parliament.uk/EarlyDayMotions/list?parameters.orderBy=DateTabledDesc&skip=0&take={0}";
-    private static readonly string CommitteeMeetingsUrl = "https://committees-api.parliament.uk/api/Broadcast/Meetings?FromDate={0}&ToDate={1}";
-    private static readonly string AnsweringBodiesUrl = "https://members-api.parliament.uk/api/Reference/AnsweringBodies";
 
     [McpServerTool, Description("get information on member of parliament by name")]
     public static async Task<string> GetMemberByNameAsync(IServiceProvider serviceProvider, string name)
     {
         var httpClient = GetHttpClient(serviceProvider);
-        var url = string.Format(MembersSearchUrl, Uri.EscapeDataString(name));
+        var url = $"https://members-api.parliament.uk/api/Members/Search?Name={Uri.EscapeDataString(name)}";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
         var json = await response.Content.ReadAsStringAsync();
-        return json;
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("Gets list of recently updated bills")]
     public static async Task<string> GetRecentlyUpdatedBillsAsync(IServiceProvider serviceProvider, int take = 10)
     {
         var httpClient = GetHttpClient(serviceProvider);
-        var url = string.Format(RecentlyUpdatedBillsUrl, take);
+        var url = $"https://bills-api.parliament.uk/api/v1/Bills?SortOrder=DateUpdatedDescending&skip=0&take={take}";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
         var json = await response.Content.ReadAsStringAsync();
-        return json;
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("Gets list of recently tabled early day motions")]
     public static async Task<string> GetRecentlyTabledEdmsAsync(IServiceProvider serviceProvider, int take = 10)
     {
         var httpClient = GetHttpClient(serviceProvider);
-        var url = string.Format(RecentlyTabledEdmsUrl, take);
+        var url = $"https://oralquestionsandmotions-api.parliament.uk/EarlyDayMotions/list?parameters.orderBy=DateTabledDesc&skip=0&take={take}";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
         var json = await response.Content.ReadAsStringAsync();
-        return json;
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("Get list of committee meetings between two dates")]
@@ -70,21 +66,22 @@ public static class UKParliamentOpenDataTool
         [Description("To date in format YYYY-MM-DD")] string todate)
     {
         var httpClient = GetHttpClient(serviceProvider);
-        var url = string.Format(CommitteeMeetingsUrl, Uri.EscapeDataString(fromdate), Uri.EscapeDataString(todate));
+        var url = $"https://committees-api.parliament.uk/api/Broadcast/Meetings?FromDate={Uri.EscapeDataString(fromdate)}&ToDate={Uri.EscapeDataString(todate)}";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
         var json = await response.Content.ReadAsStringAsync();
-        return json;
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("Get list of answering bodies")]
     public static async Task<string> GetAnsweringBodiesAsync(IServiceProvider serviceProvider)
     {
         var httpClient = GetHttpClient(serviceProvider);
-        var response = await httpClient.GetAsync(AnsweringBodiesUrl);
+        var url = "https://members-api.parliament.uk/api/Reference/AnsweringBodies";
+        var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
         var json = await response.Content.ReadAsStringAsync();
-        return json;
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("Get UK Parliament member by id")]
@@ -94,7 +91,8 @@ public static class UKParliamentOpenDataTool
         var url = $"https://members-api.parliament.uk/api/Members/{id}";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("Search UK parliament treaties")]
@@ -104,7 +102,8 @@ public static class UKParliamentOpenDataTool
         var url = $"https://treaties-api.parliament.uk/api/Treaty?SearchText={Uri.EscapeDataString(searchText)}";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("Search registered interests (ROI)")]
@@ -114,7 +113,8 @@ public static class UKParliamentOpenDataTool
         var url = $"https://interests-api.parliament.uk/api/v1/Interests/?MemberId={memberId}";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("Search erskine may")]
@@ -124,7 +124,8 @@ public static class UKParliamentOpenDataTool
         var url = $"https://erskinemay-api.parliament.uk/api/Search/ParagraphSearchResults/{Uri.EscapeDataString(searchTerm)}";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("Search commons divisions")]
@@ -138,7 +139,8 @@ public static class UKParliamentOpenDataTool
         if (divisionNumber.HasValue) url += $"&queryParameters.divisionNumber={divisionNumber}";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("Search lords divisions")]
@@ -148,7 +150,8 @@ public static class UKParliamentOpenDataTool
         var url = $"http://lordsvotes-api.parliament.uk/data/divisions/search?queryParameters.searchTerm={Uri.EscapeDataString(searchTerm)}";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("Search bills")]
@@ -159,7 +162,8 @@ public static class UKParliamentOpenDataTool
         if (memberId.HasValue) url += $"&MemberId={memberId}";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("Search committees")]
@@ -169,7 +173,8 @@ public static class UKParliamentOpenDataTool
         var url = $"https://committees-api.parliament.uk/api/Committees?SearchTerm={Uri.EscapeDataString(searchTerm)}";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("Search early day motions")]
@@ -179,7 +184,8 @@ public static class UKParliamentOpenDataTool
         var url = $"https://oralquestionsandmotions-api.parliament.uk/EarlyDayMotions/list?parameters.searchTerm={Uri.EscapeDataString(searchTerm)}";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("What is happening now in the commons. Annunciator.")]
@@ -189,7 +195,8 @@ public static class UKParliamentOpenDataTool
         var url = "https://now-api.parliament.uk/api/Message/message/CommonsMain/current";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("What is happening now in the lords. Annunciator.")]
@@ -199,7 +206,8 @@ public static class UKParliamentOpenDataTool
         var url = "https://now-api.parliament.uk/api/Message/message/LordsMain/current";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("Search statutory instruments by name")]
@@ -209,7 +217,8 @@ public static class UKParliamentOpenDataTool
         var url = $"https://statutoryinstruments-api.parliament.uk/api/v2/StatutoryInstrument?Name={Uri.EscapeDataString(name)}";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("Get early day motions for member id")]
@@ -219,7 +228,8 @@ public static class UKParliamentOpenDataTool
         var url = $"https://members-api.parliament.uk/api/Members/{memberid}/Edms";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("Get list of parties by house")]
@@ -229,7 +239,8 @@ public static class UKParliamentOpenDataTool
         var url = $"https://members-api.parliament.uk/api/Parties/GetActive/{house}";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("Get list of categories members can register interests in")]
@@ -239,7 +250,8 @@ public static class UKParliamentOpenDataTool
         var url = "https://interests-api.parliament.uk/api/v1/Categories";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("Get list of bill types")]
@@ -249,7 +261,8 @@ public static class UKParliamentOpenDataTool
         var url = "https://bills-api.parliament.uk/api/v1/BillTypes";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("Get list of bill stages")]
@@ -259,7 +272,8 @@ public static class UKParliamentOpenDataTool
         var url = "https://bills-api.parliament.uk/api/v1/Stages";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("Get list of departments")]
@@ -269,7 +283,8 @@ public static class UKParliamentOpenDataTool
         var url = "https://members-api.parliament.uk/api/Reference/Departments";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("Get list of committee types")]
@@ -279,7 +294,8 @@ public static class UKParliamentOpenDataTool
         var url = "https://committees-api.parliament.uk/api/CommitteeType";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("Get contributions from a specified member")]
@@ -289,7 +305,8 @@ public static class UKParliamentOpenDataTool
         var url = $"https://members-api.parliament.uk/api/Members/{memberid}/ContributionSummary?page=1";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("Search hansard for contributions")]
@@ -299,7 +316,8 @@ public static class UKParliamentOpenDataTool
         var url = $"https://hansard-api.parliament.uk/search.json?queryParameters.house={house}&queryParameters.startDate={Uri.EscapeDataString(startDate)}&queryParameters.endDate={Uri.EscapeDataString(endDate)}&queryParameters.searchTerm={Uri.EscapeDataString(searchTerm)}";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("Get oral question times")]
@@ -309,7 +327,8 @@ public static class UKParliamentOpenDataTool
         var url = $"https://oralquestionsandmotions-api.parliament.uk/oralquestiontimes/list?parameters.answeringDateStart={Uri.EscapeDataString(answeringDateStart)}&parameters.answeringDateEnd={Uri.EscapeDataString(answeringDateEnd)}";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("get published registers of interests")]
@@ -319,7 +338,8 @@ public static class UKParliamentOpenDataTool
         var url = "https://interests-api.parliament.uk/api/v1/Registers";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("get list of constituencies")]
@@ -331,7 +351,8 @@ public static class UKParliamentOpenDataTool
         if (take.HasValue) url += $"take={take.Value}";
         var response = await httpClient.GetAsync(url.TrimEnd('&'));
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("get election results for a constituency")]
@@ -341,7 +362,8 @@ public static class UKParliamentOpenDataTool
         var url = $"https://members-api.parliament.uk/api/Location/Constituency/{constituencyid}/ElectionResults";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("get commons voting i.e. division results for member")]
@@ -351,7 +373,8 @@ public static class UKParliamentOpenDataTool
         var url = $"https://commonsvotes-api.parliament.uk/data/divisions.json/membervoting?queryParameters.memberId={memberId}";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("get lords voting i.e. division results for member")]
@@ -361,7 +384,8 @@ public static class UKParliamentOpenDataTool
         var url = $"https://lordsvotes-api.parliament.uk/data/Divisions/membervoting?MemberId={memberId}";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("get lords interests staff")]
@@ -371,7 +395,8 @@ public static class UKParliamentOpenDataTool
         var url = $"https://members-api.parliament.uk/api/LordsInterests/Staff?searchTerm={Uri.EscapeDataString(searchterm)}";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     [McpServerTool, Description("search acts of parliament")]
@@ -381,12 +406,18 @@ public static class UKParliamentOpenDataTool
         var url = $"https://statutoryinstruments-api.parliament.uk/api/v2/ActOfParliament?Name={Uri.EscapeDataString(name)}";
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync();
+        return BuildResult(url, json);
     }
 
     private static HttpClient GetHttpClient(IServiceProvider serviceProvider)
     {
         var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
         return httpClientFactory.CreateClient();
+    }
+
+    private static string BuildResult(string apiSourceUrl, string data)
+    {
+        return JsonSerializer.Serialize(new { apiSourceUrl, data });
     }
 }
