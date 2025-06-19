@@ -16,30 +16,30 @@ There is AI in the mix so responses may be inaccurate (see "Reduce hallucination
 These section describes how to configure CoPilot AI in Visual Studio Code to ask questions of public parliamentary data, including below examples.
 
 Before you begin, please make sure you have the following installed:
-*   **[The .NET SDK](https://dotnet.microsoft.com/en-us/download)** (Version 9 or newer recommended)
-*   **[Git](https://git-scm.com/downloads)**
-*   **[Visual Studio Code](https://code.visualstudio.com/download)**
+*   **[The .NET SDK](https://dotnet.microsoft.com/en-us/download)** (Version 9 or newer recommended)  
+*   **[Git](https://git-scm.com/downloads)**  
+*   **[Visual Studio Code](https://code.visualstudio.com/download)**  
 
 Clone this repo e.g. to C:\code\opendata-mcp-lab
 
 Open VS Code
 
 ### Add MCP Server
-Press `Ctrl+Shift+P` to open VS Code command palette
-Select : MCP: Add Server
-Select : Command: Stdio
-enter command : dot net run --project C:\code\opendata-mcp-lab\OpenData.Mcp.Server\OpenData.Mcp.Server.csproj
-Press enter
+Press `Ctrl+Shift+P` to open VS Code command palette  
+Select : MCP: Add Server  
+Select : Command: Stdio  
+enter command : dot net run --project C:\code\opendata-mcp-lab\OpenData.Mcp.Server\OpenData.Mcp.Server.csproj  
+Press enter  
 
 ### Start MCP Server
-Press `Ctrl+Shift+P` to open VS Code command palette
-Select: MCP: List Servers
-Click on the server you just added, click Start server
+Press `Ctrl+Shift+P` to open VS Code command palette  
+Select: MCP: List Servers  
+Click on the server you just added, click Start server  
 
 ### First interaction
-Open Copilot 
+Open Copilot  
 Select Agent mode in bottom left dropdown  
-Click on configure tools in bottom, select all tools from newly added MCP server
+Click on configure tools in bottom, select all tools from newly added MCP server  
 Type a prompt e.g. "What is happening now in Commons"  
 Accept any permissions request to make a MCP call.  
 
