@@ -1,116 +1,180 @@
-# UK Parliament - Open Data - Model Context Protocol Server
+# UK Parliament Open Data - Model Context Protocol Server
 
 ## Introduction
 
-This project makes public UK Parliamentary data available to large language models (LLMs/AIs) using the [MCP protocol](https://www.anthropic.com/news/model-context-protocol) 
+This project makes public UK Parliamentary data accessible to large language models (LLMs/AIs) using the [Model Context Protocol (MCP)](https://www.anthropic.com/news/model-context-protocol).
 
-It allows the asking of questions on public parliamentary data e.g. to Microsoft Copilot AI. ( but also to any host that supports the MCP protocol ) 
+It enables AI tools (e.g. Microsoft Copilot) to answer questions about UK Parliamentary data, as long as they support the MCP protocol.
 
-It does not know how to retrieve all possible public data.  
-The selection of possible querys can be increased relatively easily. 
-More efficient methods to plug in more/most public data are planned.   
+> ⚠️ This project does **not** expose all possible public parliamentary data — yet.  
+Support for more queries is planned and relatively easy to expand.
 
-There is AI in the mix so responses may be inaccurate (see "Reduce hallucinations" below)  
+Since AI is involved, some responses may be inaccurate. See **Prompting Tips** below to improve reliability.
 
-## Installation
-These section describes how to configure CoPilot AI in Visual Studio Code to ask questions of public parliamentary data, including below examples.
+---
 
-Before you begin, please make sure you have the following installed:
-*   **[The .NET SDK](https://dotnet.microsoft.com/en-us/download)** (Version 9 or newer recommended)  
-*   **[Git](https://git-scm.com/downloads)**  
-*   **[Visual Studio Code](https://code.visualstudio.com/download)**  
+## Installation & Setup
 
-Clone this repo e.g. to C:\code\opendata-mcp-lab
+This section explains how to configure Microsoft Copilot in Visual Studio Code to query UK Parliamentary data via the MCP server.
 
-Open VS Code
+### Prerequisites
 
-### Add MCP Server
-Press `Ctrl+Shift+P` to open VS Code command palette  
-Select : MCP: Add Server  
-Select : Command: Stdio  
-enter command : dot net run --project C:\code\opendata-mcp-lab\OpenData.Mcp.Server\OpenData.Mcp.Server.csproj  
-Press enter  
+Make sure you have the following installed:
 
-### Start MCP Server
-Press `Ctrl+Shift+P` to open VS Code command palette  
-Select: MCP: List Servers  
-Click on the server you just added, click Start server  
+- [.NET SDK](https://dotnet.microsoft.com/en-us/download) (v9 or later recommended)  
+- [Git](https://git-scm.com/downloads)  
+- [Visual Studio Code](https://code.visualstudio.com/download)  
 
-### First interaction
-Open Copilot  
-Select Agent mode in bottom left dropdown  
-Click on configure tools in bottom, select all tools from newly added MCP server  
-Type a prompt e.g. "What is happening now in Commons"  
-Accept any permissions request to make a MCP call.  
+---
 
-## Prompting tips
+### Clone and Open the Project
 
-### Reduce hallucinations ("Get all data from MCP servers")
-To reduce hallucinations/increase-confidence add initial prompt as "Get all data from MCP servers"
+```bash
+git clone https://github.com/YOUR_ORG/opendata-mcp-lab.git
+cd opendata-mcp-lab
+```
 
-Common response : >Understood. I will only provide responses using data directly from the MCP (Model Context Protocol) servers. Please specify what information you would like to retrieve or explore from MCP, and I will proceed accordingly.
+Or download manually and open the folder in VS Code.
 
-### Clear context (Click +)
-Click + to start a new chat, if you are getting in a loop, or want to clear out any existing context from conversation.
+---
 
-### Get api link ("show me api URL just used")
-Whenever a MCP call is made, the parliamentary API call that was made is returned along with the main response.
+### Add MCP Server in VS Code
 
-You can ask to see this e.g. with prompt : "show me api URL just used"
+1. Press `Ctrl+Shift+P` to open the Command Palette.  
+2. Select **MCP: Add Server**.  
+3. Choose **Command: Stdio**.  
+4. Enter the following command (adjust path if needed):
 
-example response :
->The API URL just used to retrieve information about Boris Johnson from the MCP server is:
-https://members-api.parliament.uk/api/Members/Search?Name=Boris%20Johnson
+```bash
+dotnet run --project C:\code\opendata-mcp-lab\OpenData.Mcp.Server\OpenData.Mcp.Server.csproj
+```
 
+5. Press **Enter**.
 
-### Combining data from multiple sources
-Its an AI, so you can prompt e.g "Was chelmsford discussed in either house"  
-And it will make two calls to check hansard, one to Commons, one to Lords, and combine and summarise the result.  
-Then offer to show more information on what you are interested in. 
+---
 
-### Show the raw data ("show me the JSON returned from the last MCP call")
-Its an AI so will summarise and reformat data as it sees fit.
+### Start the Server
 
-But when it calls a MCP tool it gets back JSON.
+1. Press `Ctrl+Shift+P` again.  
+2. Select **MCP: List Servers**.  
+3. Click the server you just added and choose **Start server**.
 
-And you can ask to see that with a prompt such as : "show me the JSON returned from the last MCP call"
+---
 
-## Example prompts 
+### First Interaction
 
-- Has Chelmsford been discussed in either house ?
-- Who is Boris Johnson  
-- What is happening now in Lords  
-- What is happening now in Commons  
-- Search Erskine May for mace  
-- Statutory instruments on harbour
-- Who is member with id 1471  
-- Treaties on fish  
-- Treaties with Spain  
-- Present all the information in {CopyAndPastedApiResult}  
-- What are registered interests for member 172  
-- Search Commons Divisions for refugee  
-- Lords Divisions on refugee  
-- Bills on fish  
-- Committees on women  
-- Early day motions on fish  
-- Get early day motions for member 1471  
-- Get parties for house of commons  
-- Get parties for house of lords  
-- List categories for members interests  
-- List recently updated bills  
-- Get list of bill types  
-- Get list of bill stages  
-- Get list of committee meetings in November 2024  
-- Get list of departments  
-- Get list of answering bodies  
-- Get list of committee types  
-- Get list of contributions from member 172  
-- Search hansard for contributions on brexit for November 2024  
-- Get published registers of interests  
-- Get oral question times for questions tabled in november 2024  
-- Get list of constituencys  
-- Get election results for constituency 4359  
-- Get commons voting record for member 4129  
-- Get lords voting for member 3743  
-- Get lords interests staff  
-- Search acts of parliament for Road  
+1. Open **Copilot Chat** in VS Code.  
+2. Set **Agent mode** using the dropdown in the bottom-left.  
+3. Click **Configure Tools**, and select all tools from the newly added MCP server.  
+4. Try a prompt like:
+
+```plaintext
+What is happening now in the House of Commons?
+```
+
+5. Accept any permission request to allow the MCP call.
+
+---
+
+## Prompting Tips
+
+### ✅ Reduce Hallucinations
+
+Start with a system prompt like:
+
+```plaintext
+Get all data from MCP servers
+```
+
+This encourages the AI to avoid guessing and only use actual MCP data.
+
+Typical response:
+> Understood. I will only provide responses using data directly from the MCP servers.
+
+---
+
+### 🔄 Clear Context
+
+Use the `+` icon (new chat) if:
+- The AI seems stuck in a loop
+- You want to reset the conversation context
+
+---
+
+### 🔗 See the API URL Used
+
+You can ask:
+
+```plaintext
+Show me the API URL just used
+```
+
+Example response:
+> The API URL just used to retrieve information about Boris Johnson is:  
+> `https://members-api.parliament.uk/api/Members/Search?Name=Boris%20Johnson`
+
+---
+
+### 🧠 Combine Data from Multiple Sources
+
+Example:
+```plaintext
+Has Chelmsford been mentioned in either the Commons or Lords?
+```
+
+The AI may:
+- Query both Commons and Lords Hansard
+- Combine the results
+- Offer more detail if requested
+
+---
+
+### 🧾 See the Raw JSON
+
+Example:
+```plaintext
+Show me the JSON returned from the last MCP call
+```
+
+Useful for debugging or inspecting the raw structure.
+
+---
+
+## Example Prompts
+
+- What is happening now in the House of Lords?
+- Who is Boris Johnson?
+- Search Erskine May for references to the mace.
+- Are there any statutory instruments about harbours?
+- Who is the member with ID 1471?
+- What treaties involve Spain?
+- Show the full data from this pasted API result: {PasteApiResultHere}
+- What are the registered interests for member 172?
+- Search Commons Divisions for the keyword "refugee"
+- What recent bills are about fishing?
+- Which committees are focused on women’s issues?
+- Show early day motions submitted by member 1471
+- What parties are represented in the House of Commons?
+- List all categories of members' interests
+- What bills were updated recently?
+- Show all bill types
+- List committee meetings scheduled for November 2024
+- What government departments exist?
+- What are the answering bodies in Parliament?
+- List all committee types
+- Show recent contributions from member 172
+- Search Hansard for contributions on Brexit from November 2024
+- Get published registers of interests
+- Show oral question times for questions tabled in November 2024
+- List all UK constituencies
+- Show the election results for constituency 4359
+- What is the Commons voting record for member 4129?
+- What is the Lords voting record for member 3743?
+- Show staff interests for Lords members
+- Search Acts of Parliament that mention roads
+
+---
+
+## Final Thoughts
+
+The project is under active development, with plans to increase data coverage and improve interaction quality. Contributions and feedback are welcome.
