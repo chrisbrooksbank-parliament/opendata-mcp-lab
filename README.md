@@ -30,7 +30,7 @@ Make sure you have the following installed:
 ### Clone and Open the Project
 
 ```bash
-git clone https://github.com/YOUR_ORG/opendata-mcp-lab.git
+git clone https://github.com/chrisbrooksbank-parliament/opendata-mcp-lab.git
 cd opendata-mcp-lab
 ```
 
