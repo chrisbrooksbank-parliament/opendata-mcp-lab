@@ -142,14 +142,14 @@ Useful for debugging or inspecting the raw structure.
 
 ## Example Prompts
 
-- What is happening now in the House of Lords?
+- What is happening now in both houses
+- show me interests of Sir Keir Starmer
 - Who is Boris Johnson?
 - Search Erskine May for references to the mace.
 - Are there any statutory instruments about harbours?
 - Who is the member with ID 1471?
 - What treaties involve Spain?
 - Show the full data from this pasted API result: {PasteApiResultHere}
-- What are the registered interests for member 172?
 - Search Commons Divisions for the keyword "refugee"
 - What recent bills are about fishing?
 - Which committees are focused on women’s issues?
