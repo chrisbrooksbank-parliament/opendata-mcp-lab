@@ -98,7 +98,8 @@ Typical response:
 You can ask:
 
 ```plaintext
-when you get data from MCP, please always show the URL that it tells you at end of response
+when you get data from MCP, please always show the URLs that it tells you at end of response.
+Just before that show the last MCP call that you made.
 ```
 
 ---
