@@ -93,6 +93,16 @@ Typical response:
 
 ---
 
+### Show Sources
+
+You can ask:
+
+```plaintext
+when you get data from MCP, please always show the URL that it tells you at end of response
+```
+
+---
+
 ### 🔄 Clear Context
 
 Use the `+` icon (new chat) if:
