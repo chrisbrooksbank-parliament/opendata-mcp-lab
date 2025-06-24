@@ -72,7 +72,7 @@ dotnet run --project C:\code\opendata-mcp-lab\OpenData.Mcp.Server\OpenData.Mcp.S
 What is happening now in the House of Commons?
 ```
 
-5. Accept any permission request to allow the MCP call.
+5. Accept any permission request to allow the MCP call. when you get data from MCP, please always show the URL that it tells you at end of response. 
 
 ---
 
@@ -83,7 +83,7 @@ What is happening now in the House of Commons?
 Start with a system prompt like:
 
 ```plaintext
-Get all data from MCP servers
+Get all data from MCP servers. 
 ```
 
 This encourages the AI to avoid guessing and only use actual MCP data.
@@ -141,18 +141,20 @@ Useful for debugging or inspecting the raw structure.
 ---
 
 ## Example Prompts
-
 - What is happening now in both houses
 - show me interests of Sir Keir Starmer
+- what is in commons calendar for next week
 - Who is Boris Johnson?
 - Search Erskine May for references to the mace.
 - Are there any statutory instruments about harbours?
+- When is the next non sitting period for the commons
 - Who is the member with ID 1471?
 - What treaties involve Spain?
 - Show the full data from this pasted API result: {PasteApiResultHere}
 - Search Commons Divisions for the keyword "refugee"
 - What recent bills are about fishing?
 - Which committees are focused on women’s issues?
+- show me a list of parliamentary sessions
 - Show early day motions submitted by member 1471
 - What parties are represented in the House of Commons?
 - List all categories of members' interests
