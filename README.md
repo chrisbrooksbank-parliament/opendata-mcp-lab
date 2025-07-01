@@ -1,33 +1,51 @@
-# UK Parliament Open Data - Model Context Protocol Server
+# UK Parliament AI Assistant
 
-## Introduction
+This project helps Artificial Intelligence (AI) assistants, like Microsoft Copilot, answer questions using official data from the UK Parliament. It acts as a bridge, allowing the AI to access up-to-date, reliable information directly from the source.
+
+Think of it like giving your AI a library card to the UK Parliament's public records.
+
+## What Can I Ask?
+
+You can ask questions about many aspects of Parliament. Here are a few examples:
+
+*   **Current Events:** "What's happening in the House of Commons right now?"
+*   **Members of Parliament (MPs):** "Tell me about Sir Keir Starmer." or "What are Boris Johnson's registered interests?"
+*   **Legislation:** "Are there any recent bills about environmental protection?"
+*   **Debates:** "What has been said about healthcare in the House of Lords this week?"
+*   **Committees:** "Which committees are looking into economic issues?"
+
+## How Does It Work?
+
+When you ask a question in an AI assistant that is connected to this tool, the AI doesn't just guess the answer. Instead, it uses this project to look up the information in the official UK Parliament database and gives you a response based on the real data it finds.
+
+This means the answers you get are more likely to be accurate and based on facts.
+
+---
+
+## For Developers: Technical Details
 
 This project makes public UK Parliamentary data accessible to large language models (LLMs/AIs) using the [Model Context Protocol (MCP)](https://www.anthropic.com/news/model-context-protocol).
 
 It enables AI tools (e.g. Microsoft Copilot) to answer questions about UK Parliamentary data, as long as they support the MCP protocol.
 
-> ⚠️ This project does **not** expose all possible public parliamentary data — yet.  
-Support for more queries is planned and relatively easy to expand.
+> ⚠️ This project does **not** expose all possible public parliamentary data — yet.
+> Support for more queries is planned and relatively easy to expand.
 
 Since AI is involved, some responses may be inaccurate. See **Prompting Tips** below to improve reliability.
 
----
-
-## Installation & Setup
+### Installation & Setup
 
 This section explains how to configure Microsoft Copilot in Visual Studio Code to query UK Parliamentary data via the MCP server.
 
-### Prerequisites
+#### Prerequisites
 
 Make sure you have the following installed:
 
-- [.NET SDK](https://dotnet.microsoft.com/en-us/download) (v9 or later recommended)  
-- [Git](https://git-scm.com/downloads)  
-- [Visual Studio Code](https://code.visualstudio.com/download)  
+- [.NET SDK](https://dotnet.microsoft.com/en-us/download) (v9 or later recommended)
+- [Git](https://git-scm.com/downloads)
+- [Visual Studio Code](https://code.visualstudio.com/download)
 
----
-
-### Clone and Open the Project
+#### Clone and Open the Project
 
 ```bash
 git clone https://github.com/chrisbrooksbank-parliament/opendata-mcp-lab.git
@@ -36,49 +54,41 @@ cd opendata-mcp-lab
 
 Or download manually and open the folder in VS Code.
 
----
+#### Add MCP Server in VS Code
 
-### Add MCP Server in VS Code
-
-1. Press `Ctrl+Shift+P` to open the Command Palette.  
-2. Select **MCP: Add Server**.  
-3. Choose **Command: Stdio**.  
-4. Enter the following command (adjust path if needed):
+1.  Press `Ctrl+Shift+P` to open the Command Palette.
+2.  Select **MCP: Add Server**.
+3.  Choose **Command: Stdio**.
+4.  Enter the following command (adjust path if needed):
 
 ```bash
 dotnet run --project C:\code\opendata-mcp-lab\OpenData.Mcp.Server\OpenData.Mcp.Server.csproj
 ```
 
-5. Press **Enter**.
+5.  Press **Enter**.
 
----
+#### Start the Server
 
-### Start the Server
+1.  Press `Ctrl+Shift+P` again.
+2.  Select **MCP: List Servers**.
+3.  Click the server you just added and choose **Start server**.
 
-1. Press `Ctrl+Shift+P` again.  
-2. Select **MCP: List Servers**.  
-3. Click the server you just added and choose **Start server**.
+#### First Interaction
 
----
-
-### First Interaction
-
-1. Open **Copilot Chat** in VS Code.  
-2. Set **Agent mode** using the dropdown in the bottom-left.  
-3. Click **Configure Tools**, and select all tools from the newly added MCP server.  
-4. Try a prompt like:
+1.  Open **Copilot Chat** in VS Code.
+2.  Set **Agent mode** using the dropdown in the bottom-left.
+3.  Click **Configure Tools**, and select all tools from the newly added MCP server.
+4.  Try a prompt like:
 
 ```plaintext
 What is happening now in the House of Commons?
 ```
 
-5. Accept any permission request to allow the MCP call.
+5.  Accept any permission request to allow the MCP call.
 
----
+### Prompting Tips
 
-## Prompting Tips
-
-### ✅ Reduce Hallucinations
+#### ✅ Reduce Hallucinations
 
 Start with a system prompt like:
 
@@ -91,17 +101,13 @@ This encourages the AI to avoid guessing and only use actual MCP data.
 Typical response:
 > Understood. I will only provide responses using data directly from the MCP servers.
 
----
-
-### 🔄 Clear Context
+#### 🔄 Clear Context
 
 Use the `+` icon (new chat) if:
 - The AI seems stuck in a loop
 - You want to reset the conversation context
 
----
-
-### 🔗 See the API URL Used
+#### 🔗 See the API URL Used
 
 You can ask:
 
@@ -110,12 +116,10 @@ Show me the API URL just used
 ```
 
 Example response:
-> The API URL just used to retrieve information about Boris Johnson is:  
+> The API URL just used to retrieve information about Boris Johnson is:
 > `https://members-api.parliament.uk/api/Members/Search?Name=Boris%20Johnson`
 
----
-
-### 🧠 Combine Data from Multiple Sources
+#### 🧠 Combine Data from Multiple Sources
 
 Example:
 ```plaintext
@@ -127,9 +131,7 @@ The AI may:
 - Combine the results
 - Offer more detail if requested
 
----
-
-### 🧾 See the Raw JSON
+#### 🧾 See the Raw JSON
 
 Example:
 ```plaintext
@@ -138,9 +140,7 @@ Show me the JSON returned from the last MCP call
 
 Useful for debugging or inspecting the raw structure.
 
----
-
-## Example Prompts
+### Example Prompts
 
 - What is happening now in both houses
 - show me interests of Sir Keir Starmer
