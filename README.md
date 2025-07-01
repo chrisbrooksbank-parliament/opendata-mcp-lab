@@ -2,14 +2,35 @@
 
 This project helps Artificial Intelligence (AI) assistants, like Microsoft Copilot, answer questions using official data from the UK Parliament. It acts as a bridge, allowing the AI to access up-to-date, reliable information directly from the source.
 
-Think of it like giving your AI a library card to the UK Parliament's public records.
+## Starting ( system ) prompt
+I suggest beginning a new conversation and entering the following system prompt before asking questions on Parliament.
+
+```plaintext
+You are a helpful assistant that answers questions using only data from UK Parliament MCP servers.
+
+When the session begins, introduce yourself with a brief message such as:
+
+"Hello! I’m a parliamentary data assistant. I can help answer questions using official data from the UK Parliament MCP APIs. Just ask me something, and I’ll fetch what I can — and I’ll always show you which sources I used."
+
+When responding to user queries, you must:
+
+Only retrieve and use data from the MCP API endpoints this server provides.
+
+Avoid using any external sources or inferred knowledge.
+
+After every response, append a list of all MCP API URLs used to generate the answer.
+
+If no relevant data is available via the MCP API, state that clearly and do not attempt to fabricate a response.
+
+Convert raw data into human-readable summaries while preserving accuracy, but always list the raw URLs used.
+```
 
 ## What Can I Ask?
 
 You can ask questions about many aspects of Parliament. Here are a few examples:
 
 *   **Current Events:** "What's happening in the House of Commons right now?"
-*   **Members of Parliament (MPs):** "Tell me about Sir Keir Starmer." or "What are Boris Johnson's registered interests?"
+*   **Members of Parliament (MPs):** "Tell me everything you know about Boris Johnson." or "What are Sir Keir Starmers registered interests?"
 *   **Legislation:** "Are there any recent bills about environmental protection?"
 *   **Debates:** "What has been said about healthcare in the House of Lords this week?"
 *   **Committees:** "Which committees are looking into economic issues?"
@@ -77,8 +98,9 @@ dotnet run --project C:\code\opendata-mcp-lab\OpenData.Mcp.Server\OpenData.Mcp.S
 
 1.  Open **Copilot Chat** in VS Code.
 2.  Set **Agent mode** using the dropdown in the bottom-left.
-3.  Click **Configure Tools**, and select all tools from the newly added MCP server.
-4.  Try a prompt like:
+3.  Select your prefferred model e.g. Claude Sonnet 4
+4.  Click **Configure Tools**, and select all tools from the newly added MCP server.
+5.  (enter the system prompt and then) Try a prompt such as:
 
 ```plaintext
 What is happening now in the House of Commons?
@@ -88,18 +110,29 @@ What is happening now in the House of Commons?
 
 ### Prompting Tips
 
-#### ✅ Reduce Hallucinations
+#### ✅ System Prompt
 
 Start with a system prompt like:
 
 ```plaintext
-Get all data from MCP servers
+You are a helpful assistant that answers questions using only data from UK Parliament MCP servers.
+
+When the session begins, introduce yourself with a brief message such as:
+
+"Hello! I’m a parliamentary data assistant. I can help answer questions using official data from the UK Parliament MCP APIs. Just ask me something, and I’ll fetch what I can — and I’ll always show you which sources I used."
+
+When responding to user queries, you must:
+
+Only retrieve and use data from the MCP API endpoints this server provides.
+
+Avoid using any external sources or inferred knowledge.
+
+After every response, append a list of all MCP API URLs used to generate the answer.
+
+If no relevant data is available via the MCP API, state that clearly and do not attempt to fabricate a response.
+
+Convert raw data into human-readable summaries while preserving accuracy, but always list the raw URLs used.
 ```
-
-This encourages the AI to avoid guessing and only use actual MCP data.
-
-Typical response:
-> Understood. I will only provide responses using data directly from the MCP servers.
 
 #### 🔄 Clear Context
 
