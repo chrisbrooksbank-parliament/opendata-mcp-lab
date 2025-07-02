@@ -2,8 +2,8 @@
 
 This project helps Artificial Intelligence (AI) assistants, like Microsoft Copilot, answer questions using official data from the UK Parliament. It acts as a bridge, allowing the AI to access up-to-date, reliable information directly from the source.
 
-## Starting ( system ) prompt
-I suggest beginning a new conversation and entering the following system prompt before asking questions on Parliament.
+## System Prompt
+For the best results, start a new conversation and use the following system prompt before asking questions about Parliament.
 
 ```plaintext
 You are a helpful assistant that answers questions using only data from UK Parliament MCP servers.
@@ -30,27 +30,27 @@ Convert raw data into human-readable summaries while preserving accuracy, but al
 You can ask questions about many aspects of Parliament. Here are a few examples:
 
 *   **Current Events:** "What's happening in the House of Commons right now?"
-*   **Members of Parliament (MPs):** "Tell me everything you know about Boris Johnson." or "What are Sir Keir Starmers registered interests?"
+*   **Members of Parliament (MPs):** "Tell me everything you know about Boris Johnson." or "What are Sir Keir Starmer's registered interests?"
 *   **Legislation:** "Are there any recent bills about environmental protection?"
 *   **Debates:** "What has been said about healthcare in the House of Lords this week?"
 *   **Committees:** "Which committees are looking into economic issues?"
 
 ## How Does It Work?
 
-When you ask a question in an AI assistant that is connected to this tool, the AI doesn't just guess the answer. Instead, it uses this project to look up the information in the official UK Parliament database and gives you a response based on the real data it finds.
+When you ask a question to an AI assistant connected to this tool, it doesn't just guess the answer. Instead, the assistant uses this project to query the official UK Parliament database and provides a response based on the data it finds.
 
 This means the answers you get are more likely to be accurate and based on facts.
 
 ---
 
-## For Developers: Technical Details
+## Installation and Usage Guide
 
 This project makes public UK Parliamentary data accessible to large language models (LLMs/AIs) using the [Model Context Protocol (MCP)](https://www.anthropic.com/news/model-context-protocol).
 
 It enables AI tools (e.g. Microsoft Copilot) to answer questions about UK Parliamentary data, as long as they support the MCP protocol.
 
 > ⚠️ This project does **not** expose all possible public parliamentary data — yet.
-> Support for more queries is planned and relatively easy to expand.
+> Support for more queries is planned, and the project is designed for future expansion.
 
 Since AI is involved, some responses may be inaccurate. See **Prompting Tips** below to improve reliability.
 
@@ -106,33 +106,13 @@ dotnet run --project C:\code\opendata-mcp-lab\OpenData.Mcp.Server\OpenData.Mcp.S
 What is happening now in the House of Commons?
 ```
 
-5.  Accept any permission request to allow the MCP call.
+6.  Accept any permission request to allow the MCP call.
 
 ### Prompting Tips
 
 #### ✅ System Prompt
 
-Start with a system prompt like:
-
-```plaintext
-You are a helpful assistant that answers questions using only data from UK Parliament MCP servers.
-
-When the session begins, introduce yourself with a brief message such as:
-
-"Hello! I’m a parliamentary data assistant. I can help answer questions using official data from the UK Parliament MCP APIs. Just ask me something, and I’ll fetch what I can — and I’ll always show you which sources I used."
-
-When responding to user queries, you must:
-
-Only retrieve and use data from the MCP API endpoints this server provides.
-
-Avoid using any external sources or inferred knowledge.
-
-After every response, append a list of all MCP API URLs used to generate the answer.
-
-If no relevant data is available via the MCP API, state that clearly and do not attempt to fabricate a response.
-
-Convert raw data into human-readable summaries while preserving accuracy, but always list the raw URLs used.
-```
+Always begin your session with the **System Prompt** defined at the top of this guide. This is the most crucial step for ensuring the AI assistant stays on track, uses only the provided data, and cites its sources correctly.
 
 #### 🔄 Clear Context
 
@@ -140,12 +120,14 @@ Use the `+` icon (new chat) if:
 - The AI seems stuck in a loop
 - You want to reset the conversation context
 
-#### 🔗 See the API URL Used
+#### 🔗 Re-Display the API URL
 
-You can ask:
+While the AI is instructed to list source URLs automatically, you can ask for them again at any time. This is useful for troubleshooting or if you simply want to re-confirm the source for the last response.
+
+You can ask : 
 
 ```plaintext
-Show me the API URL just used
+Show me the API URL you just used.
 ```
 
 Example response:
@@ -166,26 +148,26 @@ The AI may:
 
 #### 🧾 See the Raw JSON
 
-Example:
-```plaintext
-Show me the JSON returned from the last MCP call
-```
+For debugging or to inspect the raw data structure, you can ask the assistant to show you the full JSON response from its last API call. This is particularly useful for developers who want to understand exactly what information the AI is working with before it is summarized.
 
-Useful for debugging or inspecting the raw structure.
+Example prompt:
+```plaintext
+Show me the JSON returned from the last MCP call.
+```
 
 ### Example Prompts
 
-- What is happening now in both houses
-- show me interests of Sir Keir Starmer
+- What is happening now in both Houses?
+- Show me the interests of Sir Keir Starmer
 - Who is Boris Johnson?
-- Search Erskine May for references to the mace.
+- Search Erskine May for references to the Mace.
 - Are there any statutory instruments about harbours?
 - Who is the member with ID 1471?
 - What treaties involve Spain?
 - Show the full data from this pasted API result: {PasteApiResultHere}
 - Search Commons Divisions for the keyword "refugee"
 - What recent bills are about fishing?
-- Which committees are focused on women’s issues?
+- Which committees are focused on women's issues?
 - Show early day motions submitted by member 1471
 - What parties are represented in the House of Commons?
 - List all categories of members' interests
