@@ -1,6 +1,6 @@
 # UK Parliament AI Assistant
 
-This project helps Artificial Intelligence (AI) assistants, like Microsoft Copilot, answer questions using official data from the UK Parliament. It acts as a bridge, allowing the AI to access up-to-date, reliable information directly from the source.
+This project helps Artificial Intelligence (AI) assistants, like Microsoft Copilot, answer questions using comprehensive official data from the UK Parliament. It acts as a bridge, allowing the AI to access up-to-date, reliable information directly from the source, covering members, bills, voting records, committees, debates, procedures, and much more.
 
 ## 🔥 ESSENTIAL: System Prompt (Required for Best Results!)
 
@@ -32,13 +32,17 @@ Convert raw data into human-readable summaries while preserving accuracy, but al
 
 ## What Can I Ask?
 
-You can ask questions about many aspects of Parliament. Here are a few examples:
+You can ask questions about virtually all aspects of UK Parliament data. Here are some key areas:
 
-*   **Current Events:** "What's happening in the House of Commons right now?"
-*   **Members of Parliament (MPs):** "Tell me everything you know about Boris Johnson." or "What are Sir Keir Starmer's registered interests?"
-*   **Legislation:** "Are there any recent bills about environmental protection?"
-*   **Debates:** "What has been said about healthcare in the House of Lords this week?"
-*   **Committees:** "Which committees are looking into economic issues?"
+*   **Live Parliamentary Activity:** "What's happening in the House of Commons right now?" or "What's currently being debated in the Lords?"
+*   **Members of Parliament:** "Tell me everything you know about Boris Johnson," "What are Sir Keir Starmer's registered interests?" or "Show me the voting record of member 4129"
+*   **Bills & Legislation:** "Show me details of bill 425," "What amendments were proposed for bill 425?" or "What publications exist for the Environment Bill?"
+*   **Voting Records:** "How did MPs vote on the climate change motion?" or "Show me Lords divisions on healthcare policy"
+*   **Committees & Inquiries:** "Which committees are investigating economic issues?" or "Show me evidence submitted to the Treasury Committee"
+*   **Parliamentary Procedures:** "Search Erskine May for references to Speaker's rulings" or "What are the oral question times this week?"
+*   **Constituencies & Elections:** "Show me election results for Birmingham constituencies" or "List all constituencies in Scotland"
+*   **Official Documents:** "Are there any statutory instruments about housing?" or "What treaties involve trade agreements?"
+*   **Transparency Data:** "Show register of interests for Treasury ministers" or "What are the declared interests categories?"
 
 ## Disconnecting from parliament
 
@@ -58,8 +62,8 @@ This project makes public UK Parliamentary data accessible to large language mod
 
 It enables AI tools (e.g. Microsoft Copilot) to answer questions about UK Parliamentary data, as long as they support the MCP protocol.
 
-> ⚠️ This project does **not** expose all possible public parliamentary data — yet.
-> Support for more queries is planned, and the project is designed for future expansion.
+> ✅ This project provides comprehensive coverage of UK Parliamentary data including members, bills, amendments, voting records, committees, debates, procedures, constituencies, and official documents.
+> Additional data sources and endpoints are continuously being added.
 
 Since AI is involved, some responses may be inaccurate. See **Prompting Tips** below to improve reliability.
 
@@ -166,36 +170,97 @@ Show me the JSON returned from the last MCP call.
 
 ### Example Prompts
 
+#### 🏛️ Live Parliamentary Activity
 - What is happening now in both Houses?
+- What's currently happening in the House of Commons?
+- What's currently happening in the House of Lords?
+
+#### 👥 Members of Parliament
 - Show me the interests of Sir Keir Starmer
 - Who is Boris Johnson?
-- Search Erskine May for references to the Mace.
-- Are there any statutory instruments about harbours?
 - Who is the member with ID 1471?
-- What treaties involve Spain?
-- Show the full data from this pasted API result: {PasteApiResultHere}
-- Search Commons Divisions for the keyword "refugee"
-- What recent bills are about fishing?
-- Which committees are focused on women's issues?
-- Show early day motions submitted by member 1471
-- What parties are represented in the House of Commons?
-- List all categories of members' interests
-- What bills were updated recently?
-- Show all bill types
-- List committee meetings scheduled for November 2024
-- What government departments exist?
-- What are the answering bodies in Parliament?
-- List all committee types
+- Get the biography of member 172
+- Show me contact details for member 4129
+- What are the registered interests of member 3743?
 - Show recent contributions from member 172
-- Search Hansard for contributions on Brexit from November 2024
-- Get published registers of interests
-- Show oral question times for questions tabled in November 2024
-- List all UK constituencies
-- Show the election results for constituency 4359
 - What is the Commons voting record for member 4129?
 - What is the Lords voting record for member 3743?
+- Show the professional experience of member 1471
+- What policy areas does member 172 focus on?
+- Show early day motions submitted by member 1471
+- Get the constituency election results for member 4129
+- Show me the portrait and thumbnail images for member 172
+
+#### 📜 Bills and Legislation
+- What recent bills are about fishing?
+- What bills were updated recently?
+- Show me details of bill 425
+- What stages has bill 425 been through?
+- What amendments were proposed for bill 425 at stage 15?
+- Show me amendment 1234 for bill 425 stage 15
+- What publications exist for bill 425?
+- What news articles are there about bill 425?
+- Show me all bill types available
+- What are the different stages a bill can go through?
+- Search for bills containing the word "environment"
+- Get the RSS feed for all bills
+- Get the RSS feed for public bills only
+- Get the RSS feed for bill 425
+
+#### 🗳️ Voting and Divisions
+- Search Commons Divisions for the keyword "refugee"
+- Show details of Commons division 1234
+- Show details of Lords division 5678
+- Get Commons divisions grouped by party for keyword "climate"
+- Get Lords divisions grouped by party for member 3743
+- How many divisions match the search term "brexit"?
+
+#### 🏢 Committees and Inquiries
+- Which committees are focused on women's issues?
+- List committee meetings scheduled for November 2024
+- Show me details of committee 789
+- What events has committee 789 held?
+- Who are the members of committee 789?
+- Search for committee publications about healthcare
+- Show me written evidence submitted to committee 789
+- Show me oral evidence from committee 789 hearings
+- What are all the committee types?
+
+#### 🏛️ Parliamentary Procedures
+- Search Erskine May for references to the Mace
+- Show oral question times for questions tabled in November 2024
+- Search Hansard for contributions on Brexit from November 2024
+- What government departments exist?
+- What are the answering bodies in Parliament?
+- What parties are represented in the House of Commons?
+- What parties are represented in the House of Lords?
+- Show parliamentary calendar events for Commons in December 2024
+- When is Parliament not sitting in January 2025?
+
+#### 📍 Constituencies and Elections
+- List all UK constituencies
+- Show the election results for constituency 4359
+- Search for constituencies containing "london"
+
+#### 💰 Transparency and Interests
+- List all categories of members' interests
+- Get published registers of interests
 - Show staff interests for Lords members
+- Search the register of interests for member 1471
+
+#### 📋 Official Documents and Publications
+- Are there any statutory instruments about harbours?
 - Search Acts of Parliament that mention roads
+- What treaties involve Spain?
+- What publication types are available for bills?
+- Show me document 123 from publication 456
+
+#### 🔍 Advanced Queries
+- Show the full data from this pasted API result: {PasteApiResultHere}
+- Show me the JSON returned from the last MCP call
+- Show me the API URL you just used
+- Search for bills sponsored by member 172 from the Environment department
+- Find all committee meetings about climate change between November and December 2024
 
 ---
 

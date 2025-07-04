@@ -707,6 +707,160 @@ namespace OpenData.Mcp.Server
             return await GetResult(url);
         }
 
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get detailed information about a specific bill by ID. Use when you need comprehensive bill details including title, sponsors, stages, summary, and current status.")]
+        public async Task<string> GetBillByIdAsync(int billId)
+        {
+            var url = $"{BillsApiBase}/Bills/{billId}";
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get all stages of a specific bill by bill ID. Use when tracking a bill's progress through Parliament, understanding its legislative journey, or finding specific stages like Committee Stage or Third Reading.")]
+        public async Task<string> GetBillStagesAsync(int billId, int? skip = null, int? take = null)
+        {
+            var url = BuildUrl($"{BillsApiBase}/Bills/{billId}/Stages", new()
+            {
+                ["Skip"] = skip?.ToString(),
+                ["Take"] = take?.ToString()
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get detailed information about a specific stage of a bill. Use when you need complete details about a particular stage including timings, committee involvement, and related activities.")]
+        public async Task<string> GetBillStageDetailsAsync(int billId, int billStageId)
+        {
+            var url = $"{BillsApiBase}/Bills/{billId}/Stages/{billStageId}";
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get all amendments for a specific bill stage. Use when researching proposed changes to legislation, tracking amendment activity, or understanding what modifications are being suggested to a bill.")]
+        public async Task<string> GetBillStageAmendmentsAsync(int billId, int billStageId, string searchTerm = null, string amendmentNumber = null, string decision = null, int? memberId = null, int? skip = null, int? take = null)
+        {
+            var url = BuildUrl($"{BillsApiBase}/Bills/{billId}/Stages/{billStageId}/Amendments", new()
+            {
+                ["SearchTerm"] = searchTerm,
+                ["AmendmentNumber"] = amendmentNumber,
+                ["Decision"] = decision,
+                ["MemberId"] = memberId?.ToString(),
+                ["Skip"] = skip?.ToString(),
+                ["Take"] = take?.ToString()
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get detailed information about a specific amendment. Use when you need complete amendment details including text, sponsors, decision, and explanatory notes.")]
+        public async Task<string> GetAmendmentByIdAsync(int billId, int billStageId, int amendmentId)
+        {
+            var url = $"{BillsApiBase}/Bills/{billId}/Stages/{billStageId}/Amendments/{amendmentId}";
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get ping pong items (amendments and motions) for a bill stage. Use when researching the final stages of bills passing between Commons and Lords, including disagreements and agreements on amendments.")]
+        public async Task<string> GetBillStagePingPongItemsAsync(int billId, int billStageId, string searchTerm = null, string amendmentNumber = null, string decision = null, int? memberId = null, int? skip = null, int? take = null)
+        {
+            var url = BuildUrl($"{BillsApiBase}/Bills/{billId}/Stages/{billStageId}/PingPongItems", new()
+            {
+                ["SearchTerm"] = searchTerm,
+                ["AmendmentNumber"] = amendmentNumber,
+                ["Decision"] = decision,
+                ["MemberId"] = memberId?.ToString(),
+                ["Skip"] = skip?.ToString(),
+                ["Take"] = take?.ToString()
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get detailed information about a specific ping pong item (amendment or motion). Use when you need complete details about final stage amendments or motions in the legislative process.")]
+        public async Task<string> GetPingPongItemByIdAsync(int billId, int billStageId, int pingPongItemId)
+        {
+            var url = $"{BillsApiBase}/Bills/{billId}/Stages/{billStageId}/PingPongItems/{pingPongItemId}";
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get all publications for a specific bill. Use when researching bill documents, impact assessments, explanatory notes, or tracking document versions throughout the legislative process.")]
+        public async Task<string> GetBillPublicationsAsync(int billId)
+        {
+            var url = $"{BillsApiBase}/Bills/{billId}/Publications";
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get publications for a specific bill stage. Use when you need documents related to a particular stage of legislation, such as committee reports or stage-specific amendments.")]
+        public async Task<string> GetBillStagePublicationsAsync(int billId, int stageId)
+        {
+            var url = $"{BillsApiBase}/Bills/{billId}/Stages/{stageId}/Publications";
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get information about a specific publication document. Use when you need metadata about bill documents including filename, content type, and size.")]
+        public async Task<string> GetPublicationDocumentAsync(int publicationId, int documentId)
+        {
+            var url = $"{BillsApiBase}/Publications/{publicationId}/Documents/{documentId}";
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get news articles related to a specific bill. Use when researching media coverage, press releases, or official communications about legislation.")]
+        public async Task<string> GetBillNewsArticlesAsync(int billId, int? skip = null, int? take = null)
+        {
+            var url = BuildUrl($"{BillsApiBase}/Bills/{billId}/NewsArticles", new()
+            {
+                ["Skip"] = skip?.ToString(),
+                ["Take"] = take?.ToString()
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get all publication types available for bills. Use when you need to understand the different types of documents that can be associated with legislation.")]
+        public async Task<string> GetPublicationTypesAsync(int? skip = null, int? take = null)
+        {
+            var url = BuildUrl($"{BillsApiBase}/PublicationTypes", new()
+            {
+                ["Skip"] = skip?.ToString(),
+                ["Take"] = take?.ToString()
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get parliamentary sittings with optional filtering by house and date range. Use when researching when Parliament was in session, finding specific sitting dates, or tracking parliamentary activity.")]
+        public async Task<string> GetSittingsAsync(string house = null, string dateFrom = null, string dateTo = null, int? skip = null, int? take = null)
+        {
+            var url = BuildUrl($"{BillsApiBase}/Sittings", new()
+            {
+                ["House"] = house,
+                ["DateFrom"] = dateFrom,
+                ["DateTo"] = dateTo,
+                ["Skip"] = skip?.ToString(),
+                ["Take"] = take?.ToString()
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get RSS feed of all bills. Use when you want to stay updated on all legislative activity through RSS feeds.")]
+        public async Task<string> GetAllBillsRssAsync()
+        {
+            var url = $"{BillsApiBase}/Rss/allbills.rss";
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get RSS feed of public bills only. Use when you want to monitor government and public bills through RSS feeds, excluding private bills.")]
+        public async Task<string> GetPublicBillsRssAsync()
+        {
+            var url = $"{BillsApiBase}/Rss/publicbills.rss";
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get RSS feed of private bills only. Use when you want to monitor private member bills and private bills through RSS feeds.")]
+        public async Task<string> GetPrivateBillsRssAsync()
+        {
+            var url = $"{BillsApiBase}/Rss/privatebills.rss";
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get RSS feed for a specific bill by ID. Use when you want to track updates and changes to a particular piece of legislation through RSS feeds.")]
+        public async Task<string> GetBillRssAsync(int billId)
+        {
+            var url = $"{BillsApiBase}/Rss/Bills/{billId}.rss";
+            return await GetResult(url);
+        }
+
         private static string BuildUrl(string baseUrl, Dictionary<string, string?> parameters)
         {
             var validParams = parameters
