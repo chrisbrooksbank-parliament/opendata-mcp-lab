@@ -40,6 +40,10 @@ You can ask questions about many aspects of Parliament. Here are a few examples:
 *   **Debates:** "What has been said about healthcare in the House of Lords this week?"
 *   **Committees:** "Which committees are looking into economic issues?"
 
+## Disconnecting from parliament
+
+Start a new chat session, or to keep context but disconnect from Parliament MCP servers prompt : "Goodbye Parliament"
+
 ## How Does It Work?
 
 When you ask a question to an AI assistant connected to this tool, it doesn't just guess the answer. Instead, the assistant uses this project to query the official UK Parliament database and provides a response based on the data it finds.

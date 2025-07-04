@@ -287,9 +287,93 @@ namespace OpenData.Mcp.Server
         }
 
         [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get complete voting record of a Lord in House of Lords divisions. Use when analyzing how a specific Lord votes, their voting patterns, or their stance on particular issues through their voting history.")]
-        public async Task<string> GetLordsVotingRecordForMemberAsync(int memberId)
+        public async Task<string> GetLordsVotingRecordForMemberAsync(int memberId, string searchTerm = null, bool? includeWhenMemberWasTeller = null, string startDate = null, string endDate = null, int? divisionNumber = null, int skip = 0, int take = 25)
         {
-            var url = $"{LordsVotesApiBase}/Divisions/membervoting?MemberId={memberId}";
+            var url = BuildUrl($"{LordsVotesApiBase}/Divisions/membervoting", new()
+            {
+                ["MemberId"] = memberId.ToString(),
+                ["SearchTerm"] = searchTerm,
+                ["IncludeWhenMemberWasTeller"] = includeWhenMemberWasTeller?.ToString(),
+                ["StartDate"] = startDate,
+                ["EndDate"] = endDate,
+                ["DivisionNumber"] = divisionNumber?.ToString(),
+                ["skip"] = skip.ToString(),
+                ["take"] = take.ToString()
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get detailed information about a specific House of Lords division by ID. Use when you need complete details about a particular Lords vote including who voted content/not content, tellers, and voting totals.")]
+        public async Task<string> GetLordsDivisionByIdAsync(int divisionId)
+        {
+            var url = $"{LordsVotesApiBase}/Divisions/{divisionId}";
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get House of Lords divisions grouped by party voting patterns. Use when analyzing how different parties voted on issues in the Lords or understanding party-line voting behavior. Shows vote counts by party rather than individual Lords.")]
+        public async Task<string> GetLordsDivisionsGroupedByPartyAsync(string searchTerm = null, int? memberId = null, string startDate = null, string endDate = null, int? divisionNumber = null, bool? includeWhenMemberWasTeller = null)
+        {
+            var url = BuildUrl($"{LordsVotesApiBase}/Divisions/groupedbyparty", new()
+            {
+                ["SearchTerm"] = searchTerm,
+                ["MemberId"] = memberId?.ToString(),
+                ["StartDate"] = startDate,
+                ["EndDate"] = endDate,
+                ["DivisionNumber"] = divisionNumber?.ToString(),
+                ["IncludeWhenMemberWasTeller"] = includeWhenMemberWasTeller?.ToString()
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get total count of House of Lords divisions matching search criteria. Use when you need to know how many Lords divisions match your search parameters before retrieving the actual results.")]
+        public async Task<string> GetLordsDivisionsSearchCountAsync(string searchTerm = null, int? memberId = null, string startDate = null, string endDate = null, int? divisionNumber = null, bool? includeWhenMemberWasTeller = null)
+        {
+            var url = BuildUrl($"{LordsVotesApiBase}/Divisions/searchTotalResults", new()
+            {
+                ["SearchTerm"] = searchTerm,
+                ["MemberId"] = memberId?.ToString(),
+                ["StartDate"] = startDate,
+                ["EndDate"] = endDate,
+                ["DivisionNumber"] = divisionNumber?.ToString(),
+                ["IncludeWhenMemberWasTeller"] = includeWhenMemberWasTeller?.ToString()
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get detailed information about a specific House of Commons division by ID. Use when you need complete details about a particular vote including who voted for/against, tellers, and voting totals.")]
+        public async Task<string> GetCommonsDivisionByIdAsync(int divisionId)
+        {
+            var url = $"{CommonsVotesApiBase}/division/{divisionId}.json";
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get House of Commons divisions grouped by party voting patterns. Use when analyzing how different parties voted on issues or understanding party-line voting behavior. Shows vote counts by party rather than individual MPs.")]
+        public async Task<string> GetCommonsDivisionsGroupedByPartyAsync(string searchTerm = null, int? memberId = null, string startDate = null, string endDate = null, int? divisionNumber = null, bool? includeWhenMemberWasTeller = null)
+        {
+            var url = BuildUrl($"{CommonsVotesApiBase}/divisions.json/groupedbyparty", new()
+            {
+                ["queryParameters.searchTerm"] = searchTerm,
+                ["queryParameters.memberId"] = memberId?.ToString(),
+                ["queryParameters.startDate"] = startDate,
+                ["queryParameters.endDate"] = endDate,
+                ["queryParameters.divisionNumber"] = divisionNumber?.ToString(),
+                ["queryParameters.includeWhenMemberWasTeller"] = includeWhenMemberWasTeller?.ToString()
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get total count of House of Commons divisions matching search criteria. Use when you need to know how many divisions match your search parameters before retrieving the actual results.")]
+        public async Task<string> GetCommonsDivisionsSearchCountAsync(string searchTerm = null, int? memberId = null, string startDate = null, string endDate = null, int? divisionNumber = null, bool? includeWhenMemberWasTeller = null)
+        {
+            var url = BuildUrl($"{CommonsVotesApiBase}/divisions.json/searchTotalResults", new()
+            {
+                ["queryParameters.searchTerm"] = searchTerm,
+                ["queryParameters.memberId"] = memberId?.ToString(),
+                ["queryParameters.startDate"] = startDate,
+                ["queryParameters.endDate"] = endDate,
+                ["queryParameters.divisionNumber"] = divisionNumber?.ToString(),
+                ["queryParameters.includeWhenMemberWasTeller"] = includeWhenMemberWasTeller?.ToString()
+            });
             return await GetResult(url);
         }
 
@@ -349,6 +433,277 @@ namespace OpenData.Mcp.Server
         public async Task<string> GetMembersContact(int memberId)
         {
             var url = $"{MembersApiBase}/Members/{memberId}/Contact";
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get detailed information about a specific committee by ID. Use when you need complete committee details including members, purpose, scrutinising departments, and contact information.")]
+        public async Task<string> GetCommitteeByIdAsync(int committeeId, bool includeBanners = false, bool showOnWebsiteOnly = true)
+        {
+            var url = BuildUrl($"{CommitteesApiBase}/Committees/{committeeId}", new()
+            {
+                ["includeBanners"] = includeBanners.ToString(),
+                ["showOnWebsiteOnly"] = showOnWebsiteOnly.ToString()
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Search for committee events with flexible filtering options. Use when you need to find meetings, hearings, or other committee activities by date, location, or committee. Supports filtering by start/end dates, house, event type, and location.")]
+        public async Task<string> GetEventsAsync(int? committeeId = null, int? committeeBusinessId = null, string searchTerm = null, string startDateFrom = null, string startDateTo = null, string endDateFrom = null, int? locationId = null, bool? excludeCancelledEvents = null, bool? sortAscending = null, int? eventTypeId = null, bool includeEventAttendees = false, bool showOnWebsiteOnly = true, int skip = 0, int take = 30)
+        {
+            var url = BuildUrl($"{CommitteesApiBase}/Events", new()
+            {
+                ["CommitteeId"] = committeeId?.ToString(),
+                ["CommitteeBusinessId"] = committeeBusinessId?.ToString(),
+                ["SearchTerm"] = searchTerm,
+                ["StartDateFrom"] = startDateFrom,
+                ["StartDateTo"] = startDateTo,
+                ["EndDateFrom"] = endDateFrom,
+                ["LocationId"] = locationId?.ToString(),
+                ["ExcludeCancelledEvents"] = excludeCancelledEvents?.ToString(),
+                ["SortAscending"] = sortAscending?.ToString(),
+                ["EventTypeId"] = eventTypeId?.ToString(),
+                ["IncludeEventAttendees"] = includeEventAttendees.ToString(),
+                ["ShowOnWebsiteOnly"] = showOnWebsiteOnly.ToString(),
+                ["Skip"] = skip.ToString(),
+                ["Take"] = take.ToString()
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get detailed information about a specific committee event by ID. Use when you need complete event details including activities, attendees, committees involved, and related business.")]
+        public async Task<string> GetEventByIdAsync(int eventId, bool showOnWebsiteOnly = true)
+        {
+            var url = BuildUrl($"{CommitteesApiBase}/Events/{eventId}", new()
+            {
+                ["showOnWebsiteOnly"] = showOnWebsiteOnly.ToString()
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get events for a specific committee by committee ID. Use when you want to see all meetings and activities for a particular committee, with options to filter by date range, business, and event type.")]
+        public async Task<string> GetCommitteeEventsAsync(int committeeId, int? committeeBusinessId = null, string searchTerm = null, string startDateFrom = null, string startDateTo = null, string endDateFrom = null, int? locationId = null, bool? excludeCancelledEvents = null, bool? sortAscending = null, int? eventTypeId = null, bool includeEventAttendees = false, bool showOnWebsiteOnly = true, int skip = 0, int take = 30)
+        {
+            var url = BuildUrl($"{CommitteesApiBase}/Committees/{committeeId}/Events", new()
+            {
+                ["CommitteeBusinessId"] = committeeBusinessId?.ToString(),
+                ["SearchTerm"] = searchTerm,
+                ["StartDateFrom"] = startDateFrom,
+                ["StartDateTo"] = startDateTo,
+                ["EndDateFrom"] = endDateFrom,
+                ["LocationId"] = locationId?.ToString(),
+                ["ExcludeCancelledEvents"] = excludeCancelledEvents?.ToString(),
+                ["SortAscending"] = sortAscending?.ToString(),
+                ["EventTypeId"] = eventTypeId?.ToString(),
+                ["IncludeEventAttendees"] = includeEventAttendees.ToString(),
+                ["ShowOnWebsiteOnly"] = showOnWebsiteOnly.ToString(),
+                ["Skip"] = skip.ToString(),
+                ["Take"] = take.ToString()
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get members and staff of a specific committee by committee ID. Use when you need to know who serves on a committee, their roles, and membership status (current/former). Returns both elected members and lay members.")]
+        public async Task<string> GetCommitteeMembersAsync(int committeeId, string membershipStatus = null, bool showOnWebsiteOnly = true, int skip = 0, int take = 30)
+        {
+            var url = BuildUrl($"{CommitteesApiBase}/Committees/{committeeId}/Members", new()
+            {
+                ["MembershipStatus"] = membershipStatus,
+                ["ShowOnWebsiteOnly"] = showOnWebsiteOnly.ToString(),
+                ["Skip"] = skip.ToString(),
+                ["Take"] = take.ToString()
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Search for committee publications including reports, government responses, and other documents. Use when researching committee outputs, finding reports on specific topics, or tracking publication dates and paper numbers.")]
+        public async Task<string> GetPublicationsAsync(int[] publicationTypeIds = null, string searchTerm = null, string startDate = null, string endDate = null, string[] paperNumbers = null, int? committeeBusinessId = null, int? committeeId = null, bool showOnWebsiteOnly = true, int skip = 0, int take = 30)
+        {
+            var url = BuildUrl($"{CommitteesApiBase}/Publications", new()
+            {
+                ["SearchTerm"] = searchTerm,
+                ["StartDate"] = startDate,
+                ["EndDate"] = endDate,
+                ["CommitteeBusinessId"] = committeeBusinessId?.ToString(),
+                ["CommitteeId"] = committeeId?.ToString(),
+                ["ShowOnWebsiteOnly"] = showOnWebsiteOnly.ToString(),
+                ["Skip"] = skip.ToString(),
+                ["Take"] = take.ToString()
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get detailed information about a specific committee publication by ID. Use when you need complete publication details including documents, HC numbers, government responses, and associated committee business.")]
+        public async Task<string> GetPublicationByIdAsync(int publicationId, bool showOnWebsiteOnly = true)
+        {
+            var url = BuildUrl($"{CommitteesApiBase}/Publications/{publicationId}", new()
+            {
+                ["showOnWebsiteOnly"] = showOnWebsiteOnly.ToString()
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Search for written evidence submissions to committees. Use when researching stakeholder submissions, witness statements, or public input to committee inquiries. Can filter by committee, business, witness names, or publication dates.")]
+        public async Task<string> GetWrittenEvidenceAsync(int? committeeBusinessId = null, int? committeeId = null, string searchTerm = null, string startDate = null, string endDate = null, bool showOnWebsiteOnly = true, int skip = 0, int take = 30)
+        {
+            var url = BuildUrl($"{CommitteesApiBase}/WrittenEvidence", new()
+            {
+                ["CommitteeBusinessId"] = committeeBusinessId?.ToString(),
+                ["CommitteeId"] = committeeId?.ToString(),
+                ["SearchTerm"] = searchTerm,
+                ["StartDate"] = startDate,
+                ["EndDate"] = endDate,
+                ["ShowOnWebsiteOnly"] = showOnWebsiteOnly.ToString(),
+                ["Skip"] = skip.ToString(),
+                ["Take"] = take.ToString()
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Search for oral evidence sessions from committee hearings. Use when researching witness testimonies, committee hearings, or transcripts from evidence sessions. Can filter by committee, business, witness names, or meeting dates.")]
+        public async Task<string> GetOralEvidenceAsync(int? committeeBusinessId = null, int? committeeId = null, string searchTerm = null, string startDate = null, string endDate = null, bool showOnWebsiteOnly = true, int skip = 0, int take = 30)
+        {
+            var url = BuildUrl($"{CommitteesApiBase}/OralEvidence", new()
+            {
+                ["CommitteeBusinessId"] = committeeBusinessId?.ToString(),
+                ["CommitteeId"] = committeeId?.ToString(),
+                ["SearchTerm"] = searchTerm,
+                ["StartDate"] = startDate,
+                ["EndDate"] = endDate,
+                ["ShowOnWebsiteOnly"] = showOnWebsiteOnly.ToString(),
+                ["Skip"] = skip.ToString(),
+                ["Take"] = take.ToString()
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Search for current MPs and Lords with comprehensive filtering options. Use when you need to find members by name, location, party, constituency, gender, posts held, or policy interests. Supports advanced search criteria including membership dates and eligibility status.")]
+        public async Task<string> SearchMembersAsync(string name = null, string location = null, string postTitle = null, int? partyId = null, int? house = null, int? constituencyId = null, string nameStartsWith = null, string gender = null, string membershipStartedSince = null, string membershipEndedSince = null, string wasMemberOnOrAfter = null, string wasMemberOnOrBefore = null, int? wasMemberOfHouse = null, bool? isEligible = null, bool? isCurrentMember = null, int? policyInterestId = null, string experience = null, int skip = 0, int take = 20)
+        {
+            var url = BuildUrl($"{MembersApiBase}/Members/Search", new()
+            {
+                ["Name"] = name,
+                ["Location"] = location,
+                ["PostTitle"] = postTitle,
+                ["PartyId"] = partyId?.ToString(),
+                ["House"] = house?.ToString(),
+                ["ConstituencyId"] = constituencyId?.ToString(),
+                ["NameStartsWith"] = nameStartsWith,
+                ["Gender"] = gender,
+                ["MembershipStartedSince"] = membershipStartedSince,
+                ["MembershipEnded.MembershipEndedSince"] = membershipEndedSince,
+                ["MembershipInDateRange.WasMemberOnOrAfter"] = wasMemberOnOrAfter,
+                ["MembershipInDateRange.WasMemberOnOrBefore"] = wasMemberOnOrBefore,
+                ["MembershipInDateRange.WasMemberOfHouse"] = wasMemberOfHouse?.ToString(),
+                ["IsEligible"] = isEligible?.ToString(),
+                ["IsCurrentMember"] = isCurrentMember?.ToString(),
+                ["PolicyInterestId"] = policyInterestId?.ToString(),
+                ["Experience"] = experience,
+                ["skip"] = skip.ToString(),
+                ["take"] = take.ToString()
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Search for historical members who were active on a specific date. Use when you need to find MPs or Lords who served during a particular period in parliamentary history.")]
+        public async Task<string> SearchMembersHistoricalAsync(string name = null, string dateToSearchFor = null, int skip = 0, int take = 20)
+        {
+            var url = BuildUrl($"{MembersApiBase}/Members/SearchHistorical", new()
+            {
+                ["name"] = name,
+                ["dateToSearchFor"] = dateToSearchFor,
+                ["skip"] = skip.ToString(),
+                ["take"] = take.ToString()
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get professional experience and career background of a member by ID. Use when researching a member's qualifications, previous employment, education, or professional history before entering Parliament.")]
+        public async Task<string> GetMemberExperienceAsync(int memberId)
+        {
+            var url = $"{MembersApiBase}/Members/{memberId}/Experience";
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get areas of focus and policy interests of a member by ID. Use when understanding what issues and policy areas a member prioritizes or specializes in.")]
+        public async Task<string> GetMemberFocusAsync(int memberId)
+        {
+            var url = $"{MembersApiBase}/Members/{memberId}/Focus";
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get registered interests of a member by ID and house. Use when investigating potential conflicts of interest, financial interests, or external roles. Shows declared interests like directorships, consultancies, and gifts.")]
+        public async Task<string> GetMemberRegisteredInterestsAsync(int memberId, int? house = null)
+        {
+            var url = BuildUrl($"{MembersApiBase}/Members/{memberId}/RegisteredInterests", new()
+            {
+                ["house"] = house?.ToString()
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get staff members working for a specific MP or Lord by member ID. Use when researching parliamentary office staff, researchers, or support personnel.")]
+        public async Task<string> GetMemberStaffAsync(int memberId)
+        {
+            var url = $"{MembersApiBase}/Members/{memberId}/Staff";
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get a brief synopsis or summary about a member by ID. Use when you need a concise overview of a member's background, role, or key information.")]
+        public async Task<string> GetMemberSynopsisAsync(int memberId)
+        {
+            var url = $"{MembersApiBase}/Members/{memberId}/Synopsis";
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get voting records of a member by ID for a specific house. Use when analyzing how a member votes, their voting patterns, or their stance on particular issues through their voting history.")]
+        public async Task<string> GetMemberVotingAsync(int memberId, int house, int? page = null)
+        {
+            var url = BuildUrl($"{MembersApiBase}/Members/{memberId}/Voting", new()
+            {
+                ["house"] = house.ToString(),
+                ["page"] = page?.ToString()
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get written questions submitted by a member by ID. Use when researching what questions a member has asked of government departments or their areas of parliamentary inquiry.")]
+        public async Task<string> GetMemberWrittenQuestionsAsync(int memberId, int? page = null)
+        {
+            var url = BuildUrl($"{MembersApiBase}/Members/{memberId}/WrittenQuestions", new()
+            {
+                ["page"] = page?.ToString()
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get historical information for multiple members by their IDs. Returns name history, party affiliations, and membership details over time. Use when researching how members' details have changed throughout their careers.")]
+        public async Task<string> GetMembersHistoryAsync(int[] memberIds)
+        {
+            var url = BuildUrl($"{MembersApiBase}/Members/History", new()
+            {
+                ["ids"] = string.Join(",", memberIds)
+            });
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get the latest election result for a member by ID. Use when researching how a member was elected, their constituency performance, vote share, or election margin.")]
+        public async Task<string> GetMemberLatestElectionResultAsync(int memberId)
+        {
+            var url = $"{MembersApiBase}/Members/{memberId}/LatestElectionResult";
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get the portrait image URL for a member by ID. Use when you need a link to a member's official parliamentary portrait photograph.")]
+        public async Task<string> GetMemberPortraitUrlAsync(int memberId)
+        {
+            var url = $"{MembersApiBase}/Members/{memberId}/PortraitUrl";
+            return await GetResult(url);
+        }
+
+        [McpServerTool(ReadOnly = true, Idempotent = true, OpenWorld = false), Description("Get the thumbnail image URL for a member by ID. Use when you need a link to a smaller version of a member's parliamentary photograph for lists or compact displays.")]
+        public async Task<string> GetMemberThumbnailUrlAsync(int memberId)
+        {
+            var url = $"{MembersApiBase}/Members/{memberId}/ThumbnailUrl";
             return await GetResult(url);
         }
 
