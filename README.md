@@ -2,8 +2,13 @@
 
 This project helps Artificial Intelligence (AI) assistants, like Microsoft Copilot, answer questions using official data from the UK Parliament. It acts as a bridge, allowing the AI to access up-to-date, reliable information directly from the source.
 
-## System Prompt
-For the best results, start a new conversation and use the following system prompt before asking questions about Parliament.
+## 🔥 ESSENTIAL: System Prompt (Required for Best Results!)
+
+**IMPORTANT**: You MUST use the starting system prompt when starting a new conversation. This is critical for accurate responses.
+
+The easiest way to do this is to start all new conversations with the prompt  "Hello Parliament".
+
+Or you can copy and past the following instead : 
 
 ```plaintext
 You are a helpful assistant that answers questions using only data from UK Parliament MCP servers.
