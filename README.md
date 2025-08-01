@@ -91,10 +91,13 @@ Or download manually and open the folder in VS Code.
 #### Add MCP Server in Claude Desktop Application  
 
 * Open the claude desktop application  
-* Click settings  
-* Click Developer tag
-* Click Edit Config
-* Edit file and save with UTF-8 encoding
+* Click settings   
+* Click Developer tag  
+* Click Edit Config  
+* Edit file and save with UTF-8 encoding  
+* Exit claude ( with TaskMon if needed ) and restart it  
+* Open developer tab again and check it is running  
+* Enter the system prompt and test its working ok  
 
 Example claude_desktop_config.json file contents : 
 
