@@ -88,6 +88,35 @@ cd opendata-mcp-lab
 
 Or download manually and open the folder in VS Code.
 
+#### Add MCP Server in Claude Desktop Application  
+
+* Open the claude desktop application  
+* Click settings  
+* Click Developer tag
+* Click Edit Config
+* Edit file and save with UTF-8 encoding
+
+Example claude_desktop_config.json file contents : 
+
+```json
+{
+  "mcpServers": {
+    "opendata-server": {
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "C:\\code\\opendata-mcp-lab\\OpenData.Mcp.Server\\OpenData.Mcp.Server.csproj"
+      ]
+    }
+  }
+}
+```
+
+
+
+
+
 #### Add MCP Server in VS Code
 
 1.  Press `Ctrl+Shift+P` to open the Command Palette.
